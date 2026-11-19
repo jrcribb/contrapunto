@@ -19,7 +19,6 @@ button:disabled { cursor: default; opacity: .4; }
 .card h1 { font: 500 clamp(2.6rem, 9vw, 4.5rem)/1 Georgia, serif; margin: 12px 0 18px; }
 .card p { line-height: 1.55; }
 button, select { border: 1px solid #cbbba8; border-radius: 10px; padding: 10px 14px; background: #fffaf2; color: inherit; }
-.primary { background: #493428; color: #fffaf2; border-color: #493428; }
 .card h2 { font-size: 1rem; margin: 0 0 10px; }
 .poems { list-style: none; margin: 0; padding: 4px; max-height: min(36dvh, 300px); overflow-y: auto; display: grid; gap: 8px; }
 .poems a { display: block; border: 1px solid #cbbba8; border-radius: 10px; padding: 10px 14px; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
@@ -46,15 +45,18 @@ button, select { border: 1px solid #cbbba8; border-radius: 10px; padding: 10px 1
 .interlude { background: #424a3f; color: #fff9eb; }
 .north { background: #c7a387; color: #111; }
 .south { background: #303030; color: #fff9e8; }
-.reader button { background: #fffaf2; color: #2c241f; border-radius: 999px; }
+.reader .toolbar button { border-radius: 999px; }
 .toolbar { position: absolute; top: max(12px, env(safe-area-inset-top)); left: max(14px, env(safe-area-inset-left)); right: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .toolbar > div { display: flex; flex-wrap: wrap; align-items: center; gap: inherit; }
-.reader-omissions { border-radius: 999px; padding-right: 10px; background: #fffaf2; font-size: .85rem; }
+.toolbar button { background: transparent; color: inherit; border-color: currentColor; }
+.toolbar button:focus-visible { outline-color: currentColor; }
+.stage:has(.interlude) + .toolbar { color: #fff9eb; }
+.reader-omissions { padding-right: 10px; font-size: .85rem; }
 dialog { max-width: min(640px, 90vw); max-height: 85dvh; padding: 20px; border: 1px solid #cbbba8; border-radius: 16px; background: #fffaf2; color: inherit; }
 dialog pre { white-space: pre-wrap; overflow-wrap: anywhere; }
-.toolbar select { border-radius: 999px; min-height: 44px; }
+.toolbar select { border-radius: 999px; min-height: 44px; color: #2c241f; }
 #poem-language { max-width: 140px; }
-.toolbar button[aria-pressed="true"] { background: #493428; color: #fffaf2; }
+.toolbar button[aria-pressed="true"] { box-shadow: inset 0 0 0 1px currentColor; }
 @media (max-width: 380px) { .toolbar select { padding-inline: 8px; } }
 .counter { position: absolute; right: max(14px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); width: 44px; height: 44px; border: 1px solid #d7d7d7; border-radius: 50%; background: transparent; color: #e0e0e0; text-shadow: 0 0 2px #39342e, 0 1px 2px #39342e; display: grid; place-content: center; justify-items: center; font-variant-numeric: tabular-nums; line-height: 1; pointer-events: none; }
 #page-current { font-size: var(--page-number-size, 1.2rem); font-weight: 700; }
@@ -64,7 +66,7 @@ dialog pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 <body>
 <main class="library" id="library">
     <div class="toolbar" aria-label="Controles de biblioteca" role="group">
-      <button class="primary icon-button" id="import" type="button" title="Nuevo poema" aria-label="Nuevo poema"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="icon-button" id="import" type="button" title="Nuevo poema" aria-label="Nuevo poema"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg></button>
       <button class="icon-button" id="demo" type="button" title="Ver ejemplo" aria-label="Ver ejemplo"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7z"/></svg></button>
       <input id="files" type="file" accept=".md,.markdown,text/markdown" multiple hidden>
       <div id="library-actions" hidden>
@@ -87,6 +89,10 @@ dialog pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   <div class="toolbar" id="reader-toolbar" role="group" aria-label="Controles de lectura">
     <button class="icon-button" id="back" type="button" title="Volver a la biblioteca" aria-label="Volver a la biblioteca"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button>
     <button class="icon-button" id="auto" type="button" title="Iniciar autoavance" aria-label="Iniciar autoavance" aria-pressed="false"><svg id="play-icon" class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m8 5 11 7-11 7z"/></svg><svg id="pause-icon" hidden class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5v14m6-14v14"/></svg></button>
+    <div role="group" aria-label="Tamaño de letra">
+      <button class="icon-button" id="font-smaller" type="button" title="Disminuir tamaño de letra" aria-label="Disminuir tamaño de letra"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 18 5-12 5 12M5 14h6m5-2h6"/></svg></button>
+      <button class="icon-button" id="font-larger" type="button" title="Aumentar tamaño de letra" aria-label="Aumentar tamaño de letra"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 18 5-12 5 12M5 14h6m5-2h6m-3-3v6"/></svg></button>
+    </div>
     <div id="auto-options" hidden>
       <button class="icon-button" id="highlight" type="button" title="Resaltar sílabas durante el autoavance" aria-label="Resaltar sílabas durante el autoavance" aria-pressed="true"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m4 16 10-10 4 4L8 20H4zm8-8 4 4m-3 8h7"/></svg></button>
       <select id="speed" aria-label="Velocidad de autoavance">
@@ -37283,6 +37289,10 @@ const poemList = get('documents');
 const speed = get('speed');
 const auto = get('auto');
 const highlight = get('highlight');
+const fontSmaller = get('font-smaller');
+const fontLarger = get('font-larger');
+const minTextScale = 70;
+const maxTextScale = 160;
 const languagePicker = get('poem-language');
 const languageNames = Object.freeze({
   es: 'Español', en: 'Inglés', it: 'Italiano', la: 'Latín', pt: 'Portugués', de: 'Alemán'
@@ -37307,6 +37317,7 @@ let timer;
 let readingFrame;
 let readingWindow;
 let highlightEnabled = true;
+let textScale = 100;
 let activeSegment;
 let readingSegments = [];
 let currentPoem;
@@ -37526,6 +37537,8 @@ function fitText() {
   for (const panel of stage.children) {
     const content = panel.firstElementChild;
     content.style.fontSize = '';
+    const preferredSize = parseFloat(getComputedStyle(content).fontSize) * textScale / 100;
+    content.style.fontSize = preferredSize + 'px';
     const padding = getComputedStyle(panel);
     const availableHeight = panel.clientHeight - parseFloat(padding.paddingTop) - parseFloat(padding.paddingBottom);
     const fits = () => content.getBoundingClientRect().height <= availableHeight
@@ -37533,7 +37546,7 @@ function fitText() {
     if (fits()) continue;
 
     let lower = 0;
-    let upper = parseFloat(getComputedStyle(content).fontSize);
+    let upper = preferredSize;
     for (let attempt = 0; attempt < 16; attempt++) {
       const size = (lower + upper) / 2;
       content.style.fontSize = size + 'px';
@@ -37686,8 +37699,30 @@ function closeDocument() {
 }
 
 function saveLibrary(updated = documents) {
-  localStorage.setItem(storageKey, JSON.stringify({ poems: updated, speed: speed.value, highlightEnabled }));
+  localStorage.setItem(storageKey, JSON.stringify({ poems: updated, speed: speed.value, highlightEnabled, textScale }));
 }
+
+function updateFontControls() {
+  fontSmaller.disabled = textScale <= minTextScale;
+  fontLarger.disabled = textScale >= maxTextScale;
+  fontSmaller.title = 'Disminuir tamaño de letra · ' + textScale + ' %';
+  fontLarger.title = 'Aumentar tamaño de letra · ' + textScale + ' %';
+}
+
+function changeTextScale(step) {
+  textScale = Math.max(minTextScale, Math.min(maxTextScale, textScale + step));
+  updateFontControls();
+  fitText();
+  try {
+    saveLibrary();
+  } catch {
+    setLibraryOmissions([]);
+    status.textContent = 'El navegador no pudo guardar el tamaño de letra.';
+  }
+}
+
+fontSmaller.addEventListener('click', () => changeTextScale(-10));
+fontLarger.addEventListener('click', () => changeTextScale(10));
 
 function poemRecord(name, source, title, language) {
   const poem = { name, source, title: (title || name.replace(/\.(md|markdown)$/i, '')).normalize('NFC') };
@@ -37907,6 +37942,9 @@ try {
   const saved = current?.poems ?? (legacy ? JSON.parse(legacy) : []);
   if (Array.from(speed.options).some(option => option.value === current?.speed)) speed.value = current.speed;
   if (typeof current?.highlightEnabled === 'boolean') highlightEnabled = current.highlightEnabled;
+  if (Number.isInteger(current?.textScale) && current.textScale >= minTextScale && current.textScale <= maxTextScale) {
+    textScale = current.textScale;
+  }
   if (Array.isArray(saved)) {
     for (const doc of saved) {
       if (typeof doc?.name === 'string' && typeof doc.source === 'string') {
@@ -37922,6 +37960,7 @@ try {
   status.textContent = 'No se pudo recuperar la biblioteca guardada.';
 }
 updateHighlightControl();
+updateFontControls();
 refreshLibrary();
 </script>
 </body>
